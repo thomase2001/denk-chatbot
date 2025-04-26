@@ -1,5 +1,4 @@
 # chatbot_api.py
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 import os
@@ -8,6 +7,7 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chains import RetrievalQA
+from fastapi.middleware.cors import CORSMiddleware   # <== ADD THIS
 
 # 1️⃣ Load your OpenAI API key from environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
@@ -33,6 +33,16 @@ qa = RetrievalQA.from_chain_type(
 # 6️⃣ FastAPI app setup
 app = FastAPI()
 
+# 7️⃣ CORS setup (NEW)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ⚡ If you want, replace * with your real domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 8️⃣ Define API endpoint
 class QueryRequest(BaseModel):
     question: str
 
